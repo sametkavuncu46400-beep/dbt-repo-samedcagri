@@ -3,14 +3,57 @@ version: 2
 sources:
   - name: raw
     database: local-alignment-477812-b0
-    schema: gz_raw_data
+    schema: qz_raw_data
 
     tables:
-      - name: raw_gz_sales
-        alias: sales
+      - name: sales
+        identifier: raw_gz_sales
+        description: "Sales of Greenweez; one row per product in each order."
+        loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+        freshness:
+          warn_after:
+            count: 90
+            period: day
+        columns:
+          - name: date_date
+            description: "Date of purchase."
+          - name: orders_id
+            description: "Order identifier."
+          - name: pdt_id
+            description: "Product identifier in the order."
+          - name: revenue
+            description: "Revenue for this order line."
+          - name: quantity
+            description: "Quantity of the product."
 
-      - name: raw_gz_product
-        alias: product
+      - name: product
+        identifier: raw_gz_product
+        description: "Products of Greenweez."
+        columns:
+          - name: products_id
+            description: "Primary key of the product."
+            tests:
+              - not_null
+              - unique
+          - name: purchase_price
+            description: "Purchase price of the product."
+          # diğer kolonlara istersen sonra açıklama ekleyebilirsin
 
-      - name: raw_gz_ship
-        alias: ship
+      - name: ship
+        identifier: raw_gz_ship
+        description: "Shipping information for each order."
+        columns:
+          - name: orders_id
+            description: "Primary key of the shipping table (one row per order)."
+            tests:
+              - not_null
+              - unique
+          - name: shipping_fee
+            description: "Shipping fee charged to the customer."
+          - name: ship_cost
+            description: "Internal shipping cost."
+
+
+        
+
+
